@@ -13,9 +13,11 @@ import com.xuhuawei.animalsfight.utils.MyConst;
 public class GridLineView extends View {
     private Paint paint;  //绘图
     private float cellSize;
+    private float halfCellSize;
     private  float space = 30;   //长宽间隔
     public void setCellSize(float cellSize) {
         this.cellSize = cellSize;
+        this.halfCellSize = cellSize/2;
         space=cellSize+ MyConst.VALUES;
         invalidate();
     }
@@ -54,16 +56,16 @@ public class GridLineView extends View {
     protected void onDraw(Canvas canvas){
         canvas.drawColor(Color.BLUE);
 
-        float widht=getWidth()-cellSize;
-        float height=getHeight()-cellSize;
+        float targetX=getWidth()-halfCellSize;
+        float targetY=getHeight()-halfCellSize;
 
-        float vertz =  (cellSize/2);
-        float hortz =  (cellSize/2);
+        float vertz =  halfCellSize;
+        float hortz =  halfCellSize;
         for(int i=0;i<4;i++){
             //画横线
-            canvas.drawLine(0,  vertz,  widht, vertz, paint);
+            canvas.drawLine(halfCellSize,  vertz,  targetX, vertz, paint);
             //画竖线
-            canvas.drawLine(hortz, 0, hortz, height, paint);
+            canvas.drawLine(hortz, halfCellSize, hortz, targetY, paint);
 
             vertz+=space;
             hortz+=space;
