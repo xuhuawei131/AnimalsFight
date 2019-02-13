@@ -1,12 +1,13 @@
 package com.xuhuawei.animalsfight.animals;
 
 public class AnimalCellBean {
+    public static final int MIN_INDEX=0;
+    public static final int MAX_INDEX=7;
     public int index;
     public String name;
     public boolean isRed;//是否是红方
-    public boolean isOpen=false;//是否已经翻开
     public int id;
-    public boolean isSelected=false;//是否点击选中
+    public AnimalsCellStatus status=AnimalsCellStatus.COVER;
 
     public AnimalCellBean(int index, String name) {
         this.index = index;

@@ -39,10 +39,10 @@ public class GridLineView extends View {
 
     private void init() {
         paint = new Paint();
-        paint.setColor(Color.YELLOW);
+        paint.setColor(Color.BLACK);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setStrokeWidth(3);
+        paint.setStrokeWidth(10);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class GridLineView extends View {
      * 绘制网格线
      */
     protected void onDraw(Canvas canvas){
-        canvas.drawColor(Color.BLUE);
+//        canvas.drawColor(Color.BLUE);
 
         float targetX=getWidth()-halfCellSize;
         float targetY=getHeight()-halfCellSize;

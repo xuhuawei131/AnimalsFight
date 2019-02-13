@@ -1,6 +1,8 @@
 package com.xuhuawei.animalsfight.animals;
 
 
+import com.xuhuawei.animalsfight.utils.MyConst;
+
 import java.util.*;
 
 public class AnimalDataMain {
@@ -9,13 +11,13 @@ public class AnimalDataMain {
 
     private AnimalCellBean[] totalAnimals=new AnimalCellBean[TOTAL_SUM];
     private AnimalCellBean[] sortTotalAnimals=new AnimalCellBean[TOTAL_SUM];
+    private AnimalCellBean[][] releaseArray =new AnimalCellBean[MyConst.SUM_LINE][MyConst.SUM_LINE];
 
     private Map<Integer,AnimalCellBean> leftAnimalsCellMap=new HashMap<>();
-
     private Random random =new Random();
+
     public AnimalDataMain() {
         init();
-        resetData();
     }
 
     private void init(){
@@ -27,7 +29,6 @@ public class AnimalDataMain {
         totalAnimals[5]=new AnimalCellBean(5,"老虎");
         totalAnimals[6]=new AnimalCellBean(6,"狮子");
         totalAnimals[7]=new AnimalCellBean(7,"大象");
-
 
         totalAnimals[SUM+0]=new AnimalCellBean(0,"老鼠");
         totalAnimals[SUM+1]=new AnimalCellBean(1,"小猫");
@@ -44,7 +45,6 @@ public class AnimalDataMain {
             }else{
                 totalAnimals[i].isRed=false;
             }
-            totalAnimals[i].isOpen=false;
             totalAnimals[i].id=i;
         }
     }
@@ -56,7 +56,7 @@ public class AnimalDataMain {
         //重置
         for (int i = 0; i <TOTAL_SUM ; i++) {
             sortTotalAnimals[i]=null;
-            totalAnimals[i].isOpen=false;
+            totalAnimals[i].status=AnimalsCellStatus.COVER;
             leftAnimalsCellMap.put(i,totalAnimals[i]);
         }
         //从新布局
@@ -66,6 +66,12 @@ public class AnimalDataMain {
             if (bean!=null){
                 sortTotalAnimals[i]=bean;
             }
+        }
+
+        for (int i = 0; i < TOTAL_SUM; i++) {
+            int x=i%4;
+            int y=i/4;
+            releaseArray[y][x]=sortTotalAnimals[i];
         }
     }
 
@@ -95,7 +101,11 @@ public class AnimalDataMain {
         }
     }
 
-    public AnimalCellBean[] getSortTotalAnimals() {
-        return sortTotalAnimals;
+    public AnimalCellBean[][] getReleseArray() {
+        return releaseArray;
+    }
+    public AnimalCellBean[][] getNewReleseArray() {
+        resetData();
+        return releaseArray;
     }
 }

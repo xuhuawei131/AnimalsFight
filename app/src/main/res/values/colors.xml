@@ -8,6 +8,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <!-- common colors -->
+    <color name="touming">#00000000</color>
     <color name="white">#ffffffff</color>
     <color name="black">#ff000000</color>
 
