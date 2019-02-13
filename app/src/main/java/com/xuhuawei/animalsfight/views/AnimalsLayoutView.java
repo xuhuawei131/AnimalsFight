@@ -57,14 +57,20 @@ public class AnimalsLayoutView extends FrameLayout {
 
         float cellWidth = (width - (MyConst.SUM_LINE - 1) * MyConst.VALUES) / MyConst.SUM_LINE;
         mGridLineView.setCellSize(cellWidth);
-        if (width < height) {
+        mAnimalsLayoutLayer.setCellSize(cellWidth);
 
+        int cellSize;
+        if (width < height) {
+            cellSize=width;
+        }else{
+            cellSize=height;
         }
-        int measureSpec[] = new int[]{widthMeasureSpec, heightMeasureSpec};
+
+        int measureSpec[] = new int[2];
         measureSpec[0] = View.MeasureSpec.makeMeasureSpec(
-                width, View.MeasureSpec.EXACTLY);
+                cellSize, View.MeasureSpec.EXACTLY);
         measureSpec[1] = View.MeasureSpec.makeMeasureSpec(
-                width, View.MeasureSpec.EXACTLY);
+                cellSize, View.MeasureSpec.EXACTLY);
 
         super.onMeasure(measureSpec[0], measureSpec[0]);
     }
