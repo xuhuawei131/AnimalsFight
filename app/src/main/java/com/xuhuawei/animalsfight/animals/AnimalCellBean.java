@@ -9,8 +9,16 @@ public class AnimalCellBean {
     public int id;
     public AnimalsCellStatus status=AnimalsCellStatus.COVER;
 
+    public Point currentPoint;
+
     public AnimalCellBean(int index, String name) {
         this.index = index;
         this.name = name;
+    }
+    public void setCurrentPoint(int x,int y){
+        setCurrentPoint(new Point(x,y));
+    }
+    public void setCurrentPoint(Point point){
+        currentPoint=point;
     }
 }

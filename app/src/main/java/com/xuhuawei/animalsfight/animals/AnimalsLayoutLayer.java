@@ -135,6 +135,8 @@ public class AnimalsLayoutLayer extends LinearLayout {
 
             bean.status=AnimalsCellStatus.UNSELECTED;
             dataArray[clickPoint.pointY][clickPoint.pointX]=bean;
+            bean.setCurrentPoint(clickPoint);
+
             viewArray[clickPoint.pointY][clickPoint.pointX].setAnimalCellBean(bean);
             checkResult();
         }

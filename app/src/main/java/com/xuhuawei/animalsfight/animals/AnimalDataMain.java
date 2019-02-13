@@ -72,6 +72,7 @@ public class AnimalDataMain {
             int x=i%4;
             int y=i/4;
             releaseArray[y][x]=sortTotalAnimals[i];
+            releaseArray[y][x].setCurrentPoint(x,y);
         }
     }
 
