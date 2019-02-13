@@ -14,6 +14,7 @@ public class AnimalsLayoutLayer extends LinearLayout {
     private AnimalsCellView[][] viewArray = new AnimalsCellView[MyConst.SUM_LINE][MyConst.SUM_LINE];
     private AnimalCellBean[][] dataArray;
     private AnimalsResultHelper resultHelper=new AnimalsResultHelper();
+    private boolean isRedTurn;
     public AnimalsLayoutLayer(Context context) {
         super(context);
         init();
@@ -27,6 +28,11 @@ public class AnimalsLayoutLayer extends LinearLayout {
     public AnimalsLayoutLayer(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+
+    public void setRedTurn(boolean isRedTurn){
+        this.isRedTurn=isRedTurn;
     }
 
     private void init() {
@@ -128,6 +134,7 @@ public class AnimalsLayoutLayer extends LinearLayout {
      */
     private void walkRoad(Point selectedPoint,Point clickPoint){
         if (isPositionNearby(selectedPoint,clickPoint)){
+            isRedTurn=!isRedTurn;
             AnimalCellBean bean=dataArray[selectedPoint.pointY][selectedPoint.pointX];
 
             dataArray[selectedPoint.pointY][selectedPoint.pointX]=null;
@@ -159,6 +166,7 @@ public class AnimalsLayoutLayer extends LinearLayout {
      */
     private void killTogether(Point selectedPoint,Point clickPoint){
         if (isPositionNearby(selectedPoint,clickPoint)){
+            isRedTurn=!isRedTurn;
             dataArray[selectedPoint.pointY][selectedPoint.pointX]=null;
             viewArray[selectedPoint.pointY][selectedPoint.pointX].setAnimalCellBean(null);
 
@@ -192,6 +200,21 @@ public class AnimalsLayoutLayer extends LinearLayout {
         }
     }
 
+    /**
+     * 点击的
+     * @param point
+     * @return
+     */
+    private boolean clickPointInColcor(Point point){
+        AnimalCellBean bean=dataArray[point.pointY][point.pointX];
+        if (bean.isRed==isRedTurn){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
     private AnimalsCellView.OnCellItemClickListener onCellItemClickListener =new AnimalsCellView.OnCellItemClickListener() {
         @Override
         public void onCellEmptyItemClickListener(Point point) {
@@ -206,7 +229,9 @@ public class AnimalsLayoutLayer extends LinearLayout {
             Point selectedPoint =getSelectedPoint();
             //没有被选中的动物
             if (selectedPoint==null){
-                viewArray[clickPoint.pointY][clickPoint.pointX].setCellViewSelected();
+                if (clickPointInColcor(clickPoint)){
+                    viewArray[clickPoint.pointY][clickPoint.pointX].setCellViewSelected();
+                }
             }else{//有被选中的动物
                 int selectPointX=selectedPoint.pointX;
                 int selectPointY=selectedPoint.pointY;
@@ -215,6 +240,8 @@ public class AnimalsLayoutLayer extends LinearLayout {
                 AnimalCellBean clickBean=dataArray[clickPoint.pointY][clickPoint.pointX];
 
                 if (clickBean!=null){//如果有动物
+
+
                     if (selectedBean.isRed!=clickBean.isRed){ //如果是不同颜色的
                         if (selectedBean.index==AnimalCellBean.MIN_INDEX&&clickBean.index==AnimalCellBean.MAX_INDEX){//老鼠吃大象
                             eatAnimals(new Point(selectPointX,selectPointY),clickPoint);

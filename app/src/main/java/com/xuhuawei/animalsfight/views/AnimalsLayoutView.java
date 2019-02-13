@@ -44,6 +44,14 @@ public class AnimalsLayoutView extends FrameLayout {
         addView(mGridLineView, layoutParams);
     }
 
+    public AnimalsLayoutLayer getmAnimalsLayoutLayer() {
+        return mAnimalsLayoutLayer;
+    }
+
+    public void setmAnimalsLayoutLayer(AnimalsLayoutLayer mAnimalsLayoutLayer) {
+        this.mAnimalsLayoutLayer = mAnimalsLayoutLayer;
+    }
+
     public void addAnimalsLayer() {
         mAnimalsLayoutLayer = new AnimalsLayoutLayer(getContext());
         addView(mAnimalsLayoutLayer, layoutParams);
