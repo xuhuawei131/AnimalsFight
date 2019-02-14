@@ -5,7 +5,10 @@ import com.xuhuawei.animalsfight.utils.MyConst;
 
 import java.util.*;
 
-public class AnimalDataMain {
+/**
+ * 斗兽棋资源
+ */
+public class AnimalDataHelper {
     private static final int SUM=8;
     private static final int TOTAL_SUM=SUM+SUM;
 
@@ -16,7 +19,7 @@ public class AnimalDataMain {
     private Map<Integer,AnimalCellBean> leftAnimalsCellMap=new HashMap<>();
     private Random random =new Random();
 
-    public AnimalDataMain() {
+    public AnimalDataHelper() {
         init();
     }
 
@@ -86,19 +89,6 @@ public class AnimalDataMain {
             return id;
         }else{
             return getRandomId();
-        }
-    }
-
-    /**
-     * 打印所有的卡牌
-     */
-    public void printAllCell(){
-        for (int i = 0; i < TOTAL_SUM; i++) {
-            if (i%4==0){
-                System.out.println();
-            }
-            String corlor=sortTotalAnimals[i].isRed?"红":"蓝";
-            System.out.print(corlor+"-"+sortTotalAnimals[i].name+"    ");
         }
     }
 

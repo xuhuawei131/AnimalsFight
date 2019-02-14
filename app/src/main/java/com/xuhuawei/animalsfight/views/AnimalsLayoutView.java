@@ -7,53 +7,56 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.xuhuawei.animalsfight.animals.AnimalCellBean;
-import com.xuhuawei.animalsfight.animals.AnimalDataMain;
-import com.xuhuawei.animalsfight.animals.AnimalsCellView;
 import com.xuhuawei.animalsfight.animals.AnimalsLayoutLayer;
-import com.xuhuawei.animalsfight.utils.MyConst;
+import com.xuhuawei.animalsfight.animals.AnimalsResultBean;
+import com.xuhuawei.animalsfight.animals.GameType;
+import com.xuhuawei.animalsfight.animals.interfaces.OnFinishAnimalsListener;
+import com.xuhuawei.animalsfight.animals.interfaces.OnRedTurnChangeListener;
 
 public class AnimalsLayoutView extends FrameLayout {
     private GridLineView mGridLineView;
     private AnimalsLayoutLayer mAnimalsLayoutLayer;
-
     private FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    private OnRedTurnChangeListener onRedTurnChangeListener;
+    private OnFinishAnimalsListener onMyFinishAnimalsListener;
+    private GameType gameType=GameType.PC;
 
+    private boolean isSelfOperate=false;//当前自己是否能操作
+    public void setSelfOperate(boolean selfOperate) {
+        isSelfOperate = selfOperate;
+    }
     public AnimalsLayoutView(Context context) {
         super(context);
         init();
     }
-
     public AnimalsLayoutView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
-
     public AnimalsLayoutView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
-
     private void init() {
         addLinesLayer();
         addAnimalsLayer();
+    }
+
+    public void setOnRedTurnChangeListener(OnRedTurnChangeListener listener){
+        this.onRedTurnChangeListener =listener;
+    }
+    public void setOnFinishAnimalsListener(OnFinishAnimalsListener listener){
+        this.onMyFinishAnimalsListener=listener;
     }
 
     private void addLinesLayer() {
         mGridLineView = new GridLineView(getContext());
         addView(mGridLineView, layoutParams);
     }
-
-    public AnimalsLayoutLayer getmAnimalsLayoutLayer() {
-        return mAnimalsLayoutLayer;
-    }
-
-    public void setmAnimalsLayoutLayer(AnimalsLayoutLayer mAnimalsLayoutLayer) {
-        this.mAnimalsLayoutLayer = mAnimalsLayoutLayer;
-    }
-
-    public void addAnimalsLayer() {
+    private void addAnimalsLayer() {
         mAnimalsLayoutLayer = new AnimalsLayoutLayer(getContext());
+        mAnimalsLayoutLayer.setOnRedTurnChangeListener(listener);
+        mAnimalsLayoutLayer.setOnFinishAnimalsListener(onFinishAnimalsListener);
         addView(mAnimalsLayoutLayer, layoutParams);
     }
 
@@ -74,9 +77,29 @@ public class AnimalsLayoutView extends FrameLayout {
         measureSpec[1] = View.MeasureSpec.makeMeasureSpec(
                 cellSize, View.MeasureSpec.EXACTLY);
         super.onMeasure(measureSpec[0], measureSpec[0]);
-
-        float cellWidth = (width - (MyConst.SUM_LINE - 1) * MyConst.VALUES) / MyConst.SUM_LINE;
-        mGridLineView.setCellSize(cellWidth);
-        mAnimalsLayoutLayer.setCellSize(cellWidth);
     }
+
+
+    public void resetGame(){
+        mAnimalsLayoutLayer.resetGame();
+    }
+
+    private OnRedTurnChangeListener listener=new OnRedTurnChangeListener(){
+        @Override
+        public void onRedTurnChangeListener(boolean isRedTurn) {
+            if (onRedTurnChangeListener !=null){
+                onRedTurnChangeListener.onRedTurnChangeListener(isRedTurn);
+            }
+        }
+    };
+
+    private OnFinishAnimalsListener onFinishAnimalsListener=new OnFinishAnimalsListener(){
+        @Override
+        public void onFinishAnimals(AnimalsResultBean bean) {
+            if (onMyFinishAnimalsListener!=null){
+                onMyFinishAnimalsListener.onFinishAnimals(bean);
+            }
+        }
+    };
+
 }

@@ -1,6 +1,7 @@
 package com.xuhuawei.animalsfight.animals;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -29,6 +30,8 @@ public class AnimalsCellView extends TextView {
         init();
     }
     private void init() {
+        setTextSize(20);
+        setTypeface(Typeface.DEFAULT_BOLD);
         setGravity(Gravity.CENTER);
         setOnClickListener(listener);
     }

@@ -7,14 +7,24 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.xuhuawei.animalsfight.animals.interfaces.OnFinishAnimalsListener;
+import com.xuhuawei.animalsfight.animals.interfaces.OnRedTurnChangeListener;
 import com.xuhuawei.animalsfight.utils.MyConst;
 
 public class AnimalsLayoutLayer extends LinearLayout {
-    private AnimalDataMain dataMain;
+    private AnimalDataHelper dataMain;
     private AnimalsCellView[][] viewArray = new AnimalsCellView[MyConst.SUM_LINE][MyConst.SUM_LINE];
     private AnimalCellBean[][] dataArray;
     private AnimalsResultHelper resultHelper=new AnimalsResultHelper();
     private boolean isRedTurn;
+
+    private OnRedTurnChangeListener onRedTurnChangeListener;
+    private OnFinishAnimalsListener onFinishAnimalsListener;
+
+    private boolean isSelfOperate=false;//当前自己是否能操作
+    public void setSelfOperate(boolean selfOperate) {
+        isSelfOperate = selfOperate;
+    }
     public AnimalsLayoutLayer(Context context) {
         super(context);
         init();
@@ -29,16 +39,17 @@ public class AnimalsLayoutLayer extends LinearLayout {
         super(context, attrs, defStyleAttr);
         init();
     }
+    public void setOnRedTurnChangeListener(OnRedTurnChangeListener listener){
+        this.onRedTurnChangeListener =listener;
+    }
 
-
-    public void setRedTurn(boolean isRedTurn){
-        this.isRedTurn=isRedTurn;
+    public void setOnFinishAnimalsListener(OnFinishAnimalsListener listener){
+        this.onFinishAnimalsListener=listener;
     }
 
     private void init() {
         setOrientation(VERTICAL);
-
-        dataMain = new AnimalDataMain();
+        dataMain = new AnimalDataHelper();
         dataMain.resetData();
         invilidateView();
         setData();
@@ -49,6 +60,7 @@ public class AnimalsLayoutLayer extends LinearLayout {
      */
     private void invilidateView() {
         for (int y = 0; y < MyConst.SUM_LINE; y++) {
+            //设置每一行
             LinearLayout line = new LinearLayout(getContext());
             LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             int topMargin = 0;
@@ -57,7 +69,7 @@ public class AnimalsLayoutLayer extends LinearLayout {
             }
             lineLp.topMargin = topMargin;
             addView(line, lineLp);
-
+            //设置每一行中的小item  也就是小cell
             for (int x = 0; x < MyConst.SUM_LINE; x++) {
                 AnimalsCellView cellView = new AnimalsCellView(getContext());
                 cellView.setOnCellItemClickListener(onCellItemClickListener);
@@ -68,8 +80,19 @@ public class AnimalsLayoutLayer extends LinearLayout {
             }
         }
     }
-
-    public void setCellSize(float cellSize) {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int height = getMeasuredHeight();
+        int width = getMeasuredWidth();
+        float cellWidth = (width - (MyConst.SUM_LINE - 1) * MyConst.VALUES) / MyConst.SUM_LINE;
+        setCellSize(cellWidth);
+    }
+    /**
+     * 设置大小
+     * @param cellSize
+     */
+    private void setCellSize(float cellSize) {
         for (int y = 0; y < MyConst.SUM_LINE; y++) {
             for (int x = 0; x < MyConst.SUM_LINE; x++) {
                 AnimalsCellView view = viewArray[y][x];
@@ -101,31 +124,22 @@ public class AnimalsLayoutLayer extends LinearLayout {
             }
         });
     }
-
-    private void checkResult(){
-        AnimalsResultBean bean= resultHelper.checkResult();
-        if (bean.isFinish){
-            Toast.makeText(getContext(),bean.toString(),Toast.LENGTH_LONG).show();
-        }else{
-
-        }
+    public void resetGame(){
+        setData();
     }
-
     /**
-     * 两个棋子是否是挨着的
-     * @param selectedPoint
-     * @param clickPoint
-     * @return
+     * 检查结果
      */
-    public boolean isPositionNearby(Point selectedPoint,Point clickPoint){
-        if (selectedPoint.pointY==clickPoint.pointY&&Math.abs(selectedPoint.pointX-clickPoint.pointX)==1){
-            return true;
-        }else if (selectedPoint.pointX==clickPoint.pointX&&Math.abs(selectedPoint.pointY-clickPoint.pointY)==1){
-            return true;
-        }else{
-            return false;
+    private void checkResult(){
+        AnimalsResultBean bean= resultHelper.checkResult(isRedTurn);
+        if (bean.isFinish){
+            if (onFinishAnimalsListener!=null){
+                onFinishAnimalsListener.onFinishAnimals(bean);
+            }
         }
     }
+
+
 
     /**
      * 走路
@@ -133,8 +147,11 @@ public class AnimalsLayoutLayer extends LinearLayout {
      * @param clickPoint
      */
     private void walkRoad(Point selectedPoint,Point clickPoint){
-        if (isPositionNearby(selectedPoint,clickPoint)){
+        if (AnimalsUtils.isPositionNearby(selectedPoint,clickPoint)){
             isRedTurn=!isRedTurn;
+            if (onRedTurnChangeListener !=null){
+                onRedTurnChangeListener.onRedTurnChangeListener(isRedTurn);
+            }
             AnimalCellBean bean=dataArray[selectedPoint.pointY][selectedPoint.pointX];
 
             dataArray[selectedPoint.pointY][selectedPoint.pointX]=null;
@@ -165,8 +182,11 @@ public class AnimalsLayoutLayer extends LinearLayout {
      * @param clickPoint
      */
     private void killTogether(Point selectedPoint,Point clickPoint){
-        if (isPositionNearby(selectedPoint,clickPoint)){
+        if (AnimalsUtils.isPositionNearby(selectedPoint,clickPoint)){
             isRedTurn=!isRedTurn;
+            if (onRedTurnChangeListener !=null){
+                onRedTurnChangeListener.onRedTurnChangeListener(isRedTurn);
+            }
             dataArray[selectedPoint.pointY][selectedPoint.pointX]=null;
             viewArray[selectedPoint.pointY][selectedPoint.pointX].setAnimalCellBean(null);
 
@@ -201,7 +221,7 @@ public class AnimalsLayoutLayer extends LinearLayout {
     }
 
     /**
-     * 点击的
+     * 点击的是否是自己颜色的
      * @param point
      * @return
      */
@@ -212,7 +232,6 @@ public class AnimalsLayoutLayer extends LinearLayout {
         }else{
             return false;
         }
-
     }
 
     private AnimalsCellView.OnCellItemClickListener onCellItemClickListener =new AnimalsCellView.OnCellItemClickListener() {
@@ -240,8 +259,6 @@ public class AnimalsLayoutLayer extends LinearLayout {
                 AnimalCellBean clickBean=dataArray[clickPoint.pointY][clickPoint.pointX];
 
                 if (clickBean!=null){//如果有动物
-
-
                     if (selectedBean.isRed!=clickBean.isRed){ //如果是不同颜色的
                         if (selectedBean.index==AnimalCellBean.MIN_INDEX&&clickBean.index==AnimalCellBean.MAX_INDEX){//老鼠吃大象
                             eatAnimals(new Point(selectPointX,selectPointY),clickPoint);
@@ -261,11 +278,22 @@ public class AnimalsLayoutLayer extends LinearLayout {
                     }
                 }
             }
-
         }
         @Override
         public void onCellOpenItemClickListener(Point point) {
+            //如果是第一次 那么就确定了蓝红的顺序
+            if (isFirstClick()){
+               isRedTurn= dataArray[point.pointY][point.pointX].isRed;
+                if (onRedTurnChangeListener !=null){
+                    onRedTurnChangeListener.onRedTurnChangeListener(isRedTurn);
+                }
+            }
+
             Point selectedPoint =getSelectedPoint();
+            isRedTurn=!isRedTurn;
+            if (onRedTurnChangeListener !=null){
+                onRedTurnChangeListener.onRedTurnChangeListener(isRedTurn);
+            }
             if (selectedPoint!=null){
                 viewArray[selectedPoint.pointY][selectedPoint.pointX].setCellViewUnSelected();
             }
@@ -273,4 +301,23 @@ public class AnimalsLayoutLayer extends LinearLayout {
             checkResult();
         }
     };
+
+    /**
+     * 是否是第一次点击 第一次点击的时候 有选择颜色的任务
+     * @return
+     */
+    private boolean isFirstClick(){
+        for (int i = 0; i < dataArray.length; i++) {
+            for (int j = 0; j < dataArray[i].length; j++) {
+                if (dataArray[i][j]!=null){
+                    if (dataArray[i][j].status!=AnimalsCellStatus.COVER){
+                        return false;
+                    }
+                }else{
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
