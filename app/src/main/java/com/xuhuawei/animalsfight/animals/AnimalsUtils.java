@@ -37,8 +37,9 @@ public class AnimalsUtils {
                 return 1;
             } else if (selectedBean.index == clickBean.index) {//同归于尽
                 return 0;
+            }else{
+                return -1;
             }
-            return 0;
         }
     }
 }

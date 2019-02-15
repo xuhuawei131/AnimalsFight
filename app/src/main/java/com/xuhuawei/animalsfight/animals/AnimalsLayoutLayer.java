@@ -124,6 +124,15 @@ public class AnimalsLayoutLayer extends LinearLayout {
             }
         });
     }
+    /**
+     * 跳过进行下一轮
+     */
+    public void jumpNextTurn(){
+        isRedTurn=!isRedTurn;
+        if (onRedTurnChangeListener !=null){
+            onRedTurnChangeListener.onRedTurnChangeListener(isRedTurn);
+        }
+    }
     public void resetGame(){
         setData();
     }

@@ -22,6 +22,7 @@ public class AnimalsLayoutView extends FrameLayout {
     private GameType gameType=GameType.PC;
 
     private boolean isSelfOperate=false;//当前自己是否能操作
+
     public void setSelfOperate(boolean selfOperate) {
         isSelfOperate = selfOperate;
     }
@@ -79,8 +80,17 @@ public class AnimalsLayoutView extends FrameLayout {
         super.onMeasure(measureSpec[0], measureSpec[0]);
     }
 
+    /**
+     * 跳过进行下一轮
+     */
+    public void jumpNextTurn(){
+        mAnimalsLayoutLayer.jumpNextTurn();
+    }
 
-    public void resetGame(){
+    /**
+     * 重置游戏
+     */
+   public void resetGame(){
         mAnimalsLayoutLayer.resetGame();
     }
 

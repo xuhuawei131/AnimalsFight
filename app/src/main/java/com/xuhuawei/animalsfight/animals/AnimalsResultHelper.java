@@ -26,9 +26,9 @@ public class AnimalsResultHelper {
             bean.setResult(-1);
             bean.reason = "被吃光了";
             bean.isFinish = true;
-        } else if (redresult.turnList.size() == 1) {
+        } else if (redresult.turnList.size() == 1) {//剩余一个棋子
             Point redPoint = redresult.turnList.get(0);
-
+            //如果蓝方也剩余一个 那么就直接比大小
             if (blueresult.turnList.size() == 1) {
                 Point bluePoint = blueresult.turnList.get(0);
                 AnimalCellBean redCell = dataArray[redPoint.pointY][redPoint.pointX];
@@ -37,6 +37,18 @@ public class AnimalsResultHelper {
                 bean.setResult(AnimalsUtils.isBiggerThan(redCell, blueCell));
                 bean.reason = "剩余棋子比较大";
                 bean.isFinish = true;
+            }else{//如果蓝方剩余好几个 那么看看能不能给他憋死了
+                if (!isHasNotCover()){
+                    boolean redCanMove = false;
+                    if (pointCanMove(redPoint)) {
+                        redCanMove = true;
+                    }
+                    if (!redCanMove) {
+                        bean.setResult(-1);
+                        bean.reason = "棋子无法动弹";
+                        bean.isFinish = true;
+                    }
+                }
             }
 
         } else {//红方有大于1个棋子了 如果都被憋死了
@@ -54,9 +66,7 @@ public class AnimalsResultHelper {
                     bean.isFinish = true;
                 }
             }
-
         }
-
         return bean;
     }
 

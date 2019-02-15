@@ -14,6 +14,7 @@ import com.xuhuawei.animalsfight.views.AnimalsLayoutView;
 public class MainActivity extends AppCompatActivity {
     private TextView text_turn;
     private TextView btn_reset;
+    private TextView btn_nextTurn;
     private AnimalsLayoutView view_animals;
 
     @Override
@@ -23,7 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
         text_turn=findViewById(R.id.text_turn);
         btn_reset=findViewById(R.id.btn_reset);
+        btn_nextTurn=findViewById(R.id.btn_nextTurn);
         btn_reset.setOnClickListener(onClickListener);
+        btn_nextTurn.setOnClickListener(onClickListener);
 
         view_animals=findViewById(R.id.view_animals);
         view_animals.setOnRedTurnChangeListener(onRedTurnChangeListener);
@@ -33,7 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener onClickListener=new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            view_animals.resetGame();
+            if (btn_reset==v){
+                view_animals.resetGame();
+            }else if (btn_nextTurn==v){
+                view_animals.jumpNextTurn();
+            }
         }
     };
 
